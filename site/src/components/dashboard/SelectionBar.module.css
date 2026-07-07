@@ -1,0 +1,22 @@
+.bar {
+  position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+  background: var(--card); border: 1px solid var(--green);
+  border-radius: 12px; padding: .75rem 1.25rem;
+  display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
+  z-index: 90; box-shadow: 0 4px 24px rgba(0,0,0,.5);
+  white-space: nowrap; min-width: min(680px, 95vw);
+  animation: slideUp .25s cubic-bezier(.4,0,.2,1);
+}
+@keyframes slideUp { from { bottom: -80px; } to { bottom: 1.25rem; } }
+.count { font-size: .82rem; font-weight: 700; color: var(--green); flex-shrink: 0; }
+.stats { display: flex; gap: 1.5rem; flex: 1; flex-wrap: wrap; }
+.stat { font-size: .82rem; color: var(--muted); }
+.stat strong { color: var(--text); }
+.green strong { color: var(--green); }
+.red strong { color: var(--red); }
+.clearBtn {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); border-radius: 7px; padding: .3rem .8rem;
+  font-size: .78rem; cursor: pointer; flex-shrink: 0; font-family: inherit;
+}
+.clearBtn:hover { color: var(--text); border-color: var(--muted); }

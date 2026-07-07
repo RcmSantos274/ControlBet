@@ -1,0 +1,19 @@
+.main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+.cards {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 2rem;
+}
+.toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;
+}
+.counter { font-size: 1rem; color: var(--muted); font-weight: 500; }
+.actions { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.importLabel {
+  display: inline-flex; align-items: center; cursor: pointer;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 7px;
+  padding: .3rem .7rem; font-size: .78rem; font-weight: 600;
+  transition: all .2s; white-space: nowrap;
+}
+.importLabel:hover { color: var(--text); border-color: var(--muted); }

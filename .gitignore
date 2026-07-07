@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.production
+.env.local
+dist/
+.next/
+*.pem
+npm-debug.log*
+yarn-error.log*
+backend/src/generated/
+site/src/generated/

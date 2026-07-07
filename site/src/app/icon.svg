@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="16" y1="84" x2="76" y2="16">
+      <stop offset="0%"   stop-color="#15803d"/>
+      <stop offset="55%"  stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#4ade80"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="4" refY="4.5" orient="auto">
+      <path d="M1,2 L5,4.5 L1,7" fill="none" stroke="#4ade80" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Dark background -->
+  <rect width="100" height="100" rx="20" fill="#0a0e1a"/>
+
+  <!-- C-arc: from bottom-center (90°) clockwise 225° to upper-right (315°) -->
+  <path d="M 50,84 A 34,34 0 1,1 74,26"
+        fill="none" stroke="url(#g)" stroke-width="11" stroke-linecap="round"/>
+
+  <!-- White bars (short / medium / tall) -->
+  <rect x="29" y="62" width="9" height="13" rx="2.5" fill="white"/>
+  <rect x="43" y="55" width="9" height="20" rx="2.5" fill="white"/>
+  <rect x="57" y="48" width="9" height="27" rx="2.5" fill="white"/>
+
+  <!-- Trend polyline + arrow -->
+  <polyline points="33.5,61 47.5,54 61.5,47 72,30"
+            fill="none" stroke="#4ade80" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"
+            marker-end="url(#arr)"/>
+
+  <!-- Dots on bar tops -->
+  <circle cx="33.5" cy="61" r="3.2" fill="#4ade80"/>
+  <circle cx="47.5" cy="54" r="3.2" fill="#4ade80"/>
+  <circle cx="61.5" cy="47" r="3.2" fill="#4ade80"/>
+</svg>

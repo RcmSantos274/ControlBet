@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String    @default("")
+  planStatus    String    @default("trial")
+  trialEndsAt   DateTime?
+  planExpiresAt DateTime?
+  createdAt     DateTime  @default(now())
+  apostas       Aposta[]
+  times         Time[]
+  surebets      Surebet[]
+  payments      Payment[]
+
+  @@map("users")
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mpPaymentId String   @unique
+  plano       String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("payments")
+}
+
+model Aposta {
+  id        String   @id @default(cuid())
+  partida   String
+  mercado   String
+  situacao  String
+  resultado String   @default("pendente")
+  valor     Float
+  odd       Float
+  retorno   Float    @default(0)
+  lucro     Float    @default(0)
+  cashVal   Float?
+  liga      String   @default("")
+  sport     String   @default("futebol")
+  obs       String   @default("")
+  data      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("apostas")
+}
+
+model Surebet {
+  id         String   @id @default(cuid())
+  dataAposta String
+  dataEvento String
+  esporte    String
+  evento     String
+
+  casa1      String
+  mercado1   String
+  odd1       Float
+  stake1     Float
+  resultado1 String   @default("pendente")
+
+  casa2      String
+  mercado2   String
+  odd2       Float
+  stake2     Float
+  resultado2 String   @default("pendente")
+
+  lucro      Float    @default(0)
+  obs        String   @default("")
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("surebets")
+}
+
+model Time {
+  id        String    @id @default(cuid())
+  nome      String
+  liga      String    @default("")
+  createdAt DateTime  @default(now())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  partidas  Partida[]
+
+  @@map("times")
+}
+
+model Partida {
+  id        String   @id @default(cuid())
+  nome      String
+  data      String
+  timeId    String
+  time      Time     @relation(fields: [timeId], references: [id], onDelete: Cascade)
+  notas     Nota[]
+  createdAt DateTime @default(now())
+
+  @@map("partidas")
+}
+
+model Nota {
+  id        String   @id @default(cuid())
+  tipo      String
+  jogador   String   @default("")
+  texto     String
+  data      String
+  partidaId String
+  partida   Partida  @relation(fields: [partidaId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("notas")
+}

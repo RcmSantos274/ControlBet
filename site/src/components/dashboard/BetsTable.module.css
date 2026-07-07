@@ -1,0 +1,64 @@
+.wrap {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow-x: auto;
+  /* scrollbar sempre visível e estilizada */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.12) transparent;
+}
+.wrap::-webkit-scrollbar { height: 5px; }
+.wrap::-webkit-scrollbar-track { background: transparent; }
+.wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 3px; }
+.wrap::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.28); }
+
+.table { width: 100%; border-collapse: collapse; font-size: .82rem; min-width: 860px; }
+.table thead th {
+  background: var(--surface); color: var(--muted);
+  font-size: .70rem; text-transform: uppercase; letter-spacing: .08em;
+  padding: .6rem .7rem; text-align: left; white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+.table tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+.table tbody tr:last-child { border-bottom: none; }
+.table tbody tr:hover { background: rgba(255,255,255,.03); }
+.table td { padding: .55rem .7rem; vertical-align: middle; white-space: nowrap; }
+
+.checkCol { padding: .55rem .5rem .55rem .85rem !important; width: 32px; }
+.num { color: var(--muted); font-size: .73rem; }
+.dateCell { color: var(--muted); font-size: .76rem; white-space: nowrap; }
+.obsCell { white-space: normal !important; max-width: 120px; font-size: .76rem; color: var(--muted); }
+.selected { background: rgba(0,200,150,.05) !important; }
+
+.thSort { cursor: pointer; user-select: none; }
+.thSort:hover { color: var(--text); }
+.sortIcon { display: inline-flex; flex-direction: column; gap: 1px; vertical-align: middle; margin-left: .35rem; opacity: .3; }
+.arrUp, .arrDown { display: block; opacity: .25; }
+.active { opacity: 1 !important; color: var(--green); }
+.thSort:has(.active) .sortIcon { opacity: 1; }
+
+.partidaCell { cursor: pointer; display: flex; align-items: center; gap: .4rem; }
+.partidaCell:hover .partidaTxt { color: var(--green); }
+.notasBadge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(0,200,150,.15); color: var(--green);
+  border-radius: 10px; font-size: .65rem; font-weight: 700;
+  padding: .1rem .38rem; flex-shrink: 0;
+}
+
+/* checkbox estilo */
+:global(input[type="checkbox"]) {
+  appearance: none; -webkit-appearance: none;
+  width: 15px; height: 15px; border-radius: 4px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  cursor: pointer; flex-shrink: 0; position: relative; transition: all .15s;
+}
+:global(input[type="checkbox"]:checked) { background: var(--green); border-color: var(--green); }
+:global(input[type="checkbox"]:checked::after) {
+  content: ''; position: absolute; left: 4px; top: 1.5px;
+  width: 4px; height: 8px; border: 2px solid #0d0d1a;
+  border-top: none; border-left: none; transform: rotate(45deg);
+}
+:global(input[type="checkbox"]:indeterminate) { background: var(--border); border-color: var(--green); }
+:global(input[type="checkbox"]:indeterminate::after) {
+  content: ''; position: absolute; left: 2.5px; top: 5.5px;
+  width: 8px; height: 2px; background: var(--green);
+}

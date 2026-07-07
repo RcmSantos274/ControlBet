@@ -1,0 +1,135 @@
+.wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.12) transparent;
+}
+.wrap::-webkit-scrollbar { height: 5px; }
+.wrap::-webkit-scrollbar-track { background: transparent; }
+.wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 3px; }
+.wrap::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.28); }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+  min-width: 900px;
+}
+
+.table thead tr {
+  background: rgba(255,255,255,.04);
+  border-bottom: 2px solid var(--border);
+}
+
+.table th {
+  padding: .7rem .9rem;
+  text-align: left;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── Row pairs ── */
+.even { background: rgba(255,255,255,.015); }
+.odd  { background: rgba(0,0,0,.15); }
+
+.row1 td { border-top: 1px solid rgba(255,255,255,.06); padding-top: .6rem; }
+.row2 td { border-bottom: 2px solid rgba(255,255,255,.08); padding-bottom: .6rem; }
+
+.table td {
+  padding: .25rem .9rem;
+  vertical-align: middle;
+  color: var(--text);
+}
+
+/* Shared cells (rowSpan=2) */
+.dtCell {
+  color: var(--muted) !important;
+  font-size: .75rem !important;
+  white-space: nowrap;
+  vertical-align: middle !important;
+}
+
+.esporte {
+  color: var(--muted) !important;
+  font-size: .78rem !important;
+  white-space: nowrap;
+}
+
+.evento {
+  font-weight: 600;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.casa { font-weight: 600; white-space: nowrap; }
+.mercado { font-family: monospace; font-size: .8rem; white-space: nowrap; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.pctPos { color: #00f0a8; font-weight: 600; }
+.pctNeg { color: #ff3b68; font-weight: 600; }
+
+/* ── Resultado tags ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: .2rem .6rem;
+  border-radius: 5px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.green      { background: rgba(0,160,80,.22);    color: #00e676; border: 1px solid rgba(0,160,80,.4); }
+.meioGreen  { background: rgba(0,200,130,.13);   color: #69f0ae; border: 1px solid rgba(0,200,130,.3); }
+.devolvido  { background: rgba(80,80,95,.3);     color: #b0b0cc; border: 1px solid rgba(100,100,120,.4); }
+.red        { background: rgba(220,50,70,.2);    color: #ff5252; border: 1px solid rgba(220,50,70,.35); }
+.meioRed    { background: rgba(255,100,110,.13); color: #ff8a80; border: 1px solid rgba(255,100,110,.28); }
+.pend       { background: rgba(120,120,140,.15); color: var(--muted); border: 1px solid var(--border); }
+
+/* ── Lucro column ── */
+.lucro {
+  text-align: right;
+  font-weight: 700;
+  font-size: .9rem;
+  white-space: nowrap;
+  vertical-align: middle !important;
+  border-left: 1px solid rgba(255,255,255,.06);
+}
+.lucroPos { color: #00f0a8; }
+.lucroNeg { color: #ff3b68; }
+
+/* ── Actions ── */
+.actions {
+  text-align: center;
+  vertical-align: middle !important;
+  white-space: nowrap;
+}
+.btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 5px;
+  padding: .2rem .45rem;
+  cursor: pointer;
+  font-size: .8rem;
+  transition: all .15s;
+  margin: 0 .1rem;
+}
+.btn:hover { color: var(--text); border-color: var(--muted); }
+.btnDel:hover { color: #ff3b68; border-color: #ff3b68; }
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 3rem;
+  font-size: .9rem;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
