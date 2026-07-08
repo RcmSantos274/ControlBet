@@ -16,13 +16,25 @@ const MERCADOS: SelectGroup[] = [
     group: '⚽ Gols',
     color: '#06b6d4',
     bg: 'rgba(6,182,212,0.07)',
-    items: ['Over 0.5', 'Over 1.5', 'Over 2.5', 'Under 1.5', 'Under 2.5', 'Under 3.5', 'Ambas Marcam (BTTS)', 'Ambas Marcam ou +2.5'],
+    items: ['Over 0.5', 'Over 1.5', 'Over 2.5', 'Over 3.5', 'Under 0.5', 'Under 1.5', 'Under 2.5', 'Under 3.5', 'Ambas Marcam (BTTS)', 'Ambas Não Marcam', 'Ambas Marcam ou +2.5'],
   },
   {
     group: '🏆 Resultado Final',
     color: '#00f0a8',
     bg: 'rgba(0,240,168,0.06)',
     items: ['Casa', 'Fora', 'DC Casa', 'DC Fora', 'Empate Anula'],
+  },
+  {
+    group: '🎯 Handicap Asiático - Resultado',
+    color: '#f97316',
+    bg: 'rgba(249,115,22,0.07)',
+    items: ['HA -2', 'HA -1.5', 'HA -1', 'HA -0.75', 'HA -0.5', 'HA -0.25', 'HA 0', 'HA +0.25', 'HA +0.5', 'HA +0.75', 'HA +1', 'HA +1.5', 'HA +2'],
+  },
+  {
+    group: '🎯 Handicap Asiático - Gols',
+    color: '#fb923c',
+    bg: 'rgba(251,146,60,0.07)',
+    items: ['HA Gols 0.5/1', 'HA Gols 1', 'HA Gols 1/1.5', 'HA Gols 1.5', 'HA Gols 1.5/2', 'HA Gols 2', 'HA Gols 2/2.5', 'HA Gols 2.5', 'HA Gols 2.5/3', 'HA Gols 3'],
   },
   {
     group: '⏱️ Período',

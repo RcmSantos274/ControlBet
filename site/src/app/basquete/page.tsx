@@ -21,7 +21,7 @@ const MERCADO_GROUPS: MercadoGroup[] = [
 ]
 
 export default function BasqueteDashboard() {
-  const { apostas, add, update, remove } = useApostas('basquete')
+  const { apostas, add, update, remove, save } = useApostas('basquete')
 
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Aposta | null>(null)
