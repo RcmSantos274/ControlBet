@@ -2,6 +2,8 @@ import 'dotenv/config'
 import express from 'express'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import path from 'path'
+import fs from 'fs'
 import { rateLimit } from 'express-rate-limit'
 import authRoutes from './routes/auth'
 import apostasRoutes from './routes/apostas'
@@ -39,7 +41,14 @@ app.use('/api/pagamentos', pagamentosRoutes)
 // Health check
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }))
 
-// Erro 404
+// Frontend estático (Next.js export) — só existe em produção
+const sitePath = path.join(__dirname, '../../site/out')
+if (fs.existsSync(sitePath)) {
+  app.use(express.static(sitePath, { extensions: ['html'] }))
+  app.get('*', (_req, res) => res.sendFile(path.join(sitePath, 'index.html')))
+}
+
+// Erro 404 (somente para rotas /api não encontradas)
 app.use((_req, res) => res.status(404).json({ error: 'Rota não encontrada.' }))
 
 // Error handler global — captura erros de asyncHandler e outros
