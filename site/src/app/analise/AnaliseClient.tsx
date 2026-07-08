@@ -64,13 +64,19 @@ const yAxis = (currency = false) => ({
   grid: { color: GC2 },
 })
 
-const ALL_MERCADOS = [
-  'Over 0.5','Over 1.5','Over 2.5','Under 1.5','Under 2.5','Under 3.5',
-  'Casa','Fora','DC Casa','DC Fora','Empate Anula','Time Chute a Gol',
-  'Defesa de Goleiro','Chute','Chute a Gol','Finalização de Cabeça','Cabeceio a Gol',
-  'Faltas Sofridas','Faltas Cometidas','Over Cartões','Under Cartões',
-  'Ambas Recebem Cartão','Jogador Cartão','Escanteio','Múltipla',
-]
+const RESULTADO_FINAL_SET = new Set(['Casa','Fora','DC Casa','DC Fora','Empate Anula'])
+const GOLS_SET = new Set(['Over 0.5','Over 1.5','Over 2.5','Over 3.5','Under 0.5','Under 1.5','Under 2.5','Under 3.5','Ambas Marcam (BTTS)','Ambas Não Marcam','Ambas Marcam ou +2.5'])
+const CARTOES_SET = new Set(['Over Cartões','Under Cartões','Ambas Recebem Cartão','Jogador Cartão'])
+const PERIODO_SET = new Set(['Vitória 1º Tempo','Vitória 2º Tempo'])
+
+function getMercadoGrupo(m: string): string {
+  if (RESULTADO_FINAL_SET.has(m)) return 'Resultado Final'
+  if (GOLS_SET.has(m)) return 'Gols'
+  if (m.startsWith('HA')) return 'Handicap Asiático'
+  if (CARTOES_SET.has(m)) return 'Cartões'
+  if (PERIODO_SET.has(m)) return 'Período'
+  return m
+}
 const ODD_RANGES = [
   { label: '1.00–1.20', min: 1.00, max: 1.20 },
   { label: '1.21–1.40', min: 1.21, max: 1.40 },
@@ -112,20 +118,38 @@ export default function AnaliseClient({ sport = 'futebol' }: { sport?: string })
   const lucroT = totalRet - resolved.reduce((s, b) => s + b.valor, 0)
   const winRate = resolved.length ? winners.length / resolved.length * 100 : 0
 
-  const mercadoStats = useMemo(() => ALL_MERCADOS.map(m => {
-    const bets = apostas.filter(b => b.mercado === m)
-    if (!bets.length) return null
-    const res = bets.filter(b => b.resultado !== 'pendente')
-    const won = bets.filter(b => b.resultado === 'ganhou' || b.resultado === 'cash')
-    const volume = bets.reduce((s, b) => s + b.valor, 0)
-    const lucro = won.reduce((s, b) => s + norm(b).retorno, 0) - res.reduce((s, b) => s + b.valor, 0)
-    return { mercado: m, volume, lucro, count: bets.length,
-      ganhou: bets.filter(b=>b.resultado==='ganhou').length,
-      perdeu: bets.filter(b=>b.resultado==='perdeu').length,
-      cash: bets.filter(b=>b.resultado==='cash').length,
-      pendente: bets.filter(b=>b.resultado==='pendente').length,
-    }
-  }).filter(Boolean) as NonNullable<ReturnType<typeof ALL_MERCADOS.map>>[0][], [apostas])
+  type MStats = { mercado: string; lucro: number; volume: number; count: number; ganhou: number; perdeu: number; cash: number; pendente: number }
+
+  const mercadoStats = useMemo((): MStats[] => {
+    const map: Record<string, { ret: number; valRes: number; volume: number; count: number; ganhou: number; perdeu: number; cash: number; pendente: number }> = {}
+    apostas.forEach(b => {
+      if (!map[b.mercado]) map[b.mercado] = { ret: 0, valRes: 0, volume: 0, count: 0, ganhou: 0, perdeu: 0, cash: 0, pendente: 0 }
+      const g = map[b.mercado]
+      g.volume += b.valor; g.count++
+      if (b.resultado === 'ganhou')  { g.ganhou++; g.ret += norm(b).retorno; g.valRes += b.valor }
+      else if (b.resultado === 'perdeu') { g.perdeu++; g.valRes += b.valor }
+      else if (b.resultado === 'cash')   { g.cash++;   g.ret += norm(b).retorno; g.valRes += b.valor }
+      else g.pendente++
+    })
+    return Object.entries(map).map(([mercado, s]) => ({ mercado, volume: s.volume, count: s.count, ganhou: s.ganhou, perdeu: s.perdeu, cash: s.cash, pendente: s.pendente, lucro: s.ret - s.valRes }))
+  }, [apostas])
+
+  const mercadoGrupoStats = useMemo(() => {
+    const map: Record<string, { ret: number; valRes: number; volume: number; count: number; ganhou: number; perdeu: number; cash: number; pendente: number }> = {}
+    apostas.forEach(b => {
+      const grupo = getMercadoGrupo(b.mercado)
+      if (!map[grupo]) map[grupo] = { ret: 0, valRes: 0, volume: 0, count: 0, ganhou: 0, perdeu: 0, cash: 0, pendente: 0 }
+      const g = map[grupo]
+      g.volume += b.valor; g.count++
+      if (b.resultado === 'ganhou')  { g.ganhou++; g.ret += norm(b).retorno; g.valRes += b.valor }
+      else if (b.resultado === 'perdeu') { g.perdeu++; g.valRes += b.valor }
+      else if (b.resultado === 'cash')   { g.cash++;   g.ret += norm(b).retorno; g.valRes += b.valor }
+      else g.pendente++
+    })
+    return Object.entries(map)
+      .map(([label, s]) => ({ label, volume: s.volume, count: s.count, ganhou: s.ganhou, perdeu: s.perdeu, cash: s.cash, pendente: s.pendente, lucro: s.ret - s.valRes }))
+      .sort((a, b) => b.lucro - a.lucro)
+  }, [apostas])
 
   const oddStats = useMemo(() => ODD_RANGES.map(r => {
     const bets = apostas.filter(b => b.odd >= r.min && b.odd <= r.max)
@@ -199,7 +223,14 @@ export default function AnaliseClient({ sport = 'futebol' }: { sport?: string })
 
       {/* MERCADO */}
       <SectionHeader title="Desempenho por Mercado"/>
-      <ChartCard icon="↗" title="Lucro / Prejuízo por Mercado" subtitle="Lucro líquido obtido em cada mercado, incluindo cash outs nos cálculos." large>
+      <ChartCard icon="↗" title="Lucro / Prejuízo por Mercado" subtitle="Lucro agrupado por categoria: Resultado Final, Gols, Handicap Asiático, Cartões, Período e mercados individuais." large>
+        <div className={styles.chartWrap} style={{ height: Math.max(280, mercadoGrupoStats.length*34+60) }}>
+          <Bar plugins={[ChartDataLabels]} data={{ labels: mercadoGrupoStats.map(s=>s.label), datasets: [{ data: mercadoGrupoStats.map(s=>s.lucro), backgroundColor: mercadoGrupoStats.map(s=>s.lucro>=0?C.greenDark:C.redDark), borderColor: mercadoGrupoStats.map(s=>s.lucro>=0?C.green:C.red), borderWidth: 2, borderRadius: 4 }] }}
+            options={{ responsive:true,maintainAspectRatio:false,indexAxis:'y',layout:{padding:{right:52}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.parsed.x??0)}},datalabels:dlH},scales:{x:xAxis(true),y:{ticks:{color:TC,font:{size:13,weight:700}},grid:{color:GC}}}}}/>
+        </div>
+      </ChartCard>
+
+      <ChartCard icon="↗" title="Lucro / Prejuízo por Mercado Específico" subtitle="Lucro líquido por mercado individual, incluindo cash outs nos cálculos." large>
         <div className={styles.chartWrap} style={{ height: Math.max(280, mLucroSorted.length*30+60) }}>
           <Bar plugins={[ChartDataLabels]} data={{ labels: mLucroSorted.map((s:any)=>s.mercado), datasets: [{ data: mLucroSorted.map((s:any)=>s.lucro), backgroundColor: mLucroSorted.map((s:any)=>s.lucro>=0?C.greenDark:C.redDark), borderColor: mLucroSorted.map((s:any)=>s.lucro>=0?C.green:C.red), borderWidth: 2, borderRadius: 4 }] }}
             options={{ responsive:true,maintainAspectRatio:false,indexAxis:'y',layout:{padding:{right:52}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.parsed.x??0)}},datalabels:dlH},scales:{x:xAxis(true),y:{ticks:{color:TC,font:{size:13,weight:700}},grid:{color:GC}}}}}/>
