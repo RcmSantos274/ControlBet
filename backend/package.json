@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "npx prisma generate && tsc",
+    "build": "cd ../site && npm install && npm run build && cd ../backend && node -e \"require('fs').cpSync('../site/out','./public',{recursive:true,force:true})\" && npx prisma generate && tsc",
     "start": "node dist/server.js",
     "postinstall": "npx prisma generate"
   },

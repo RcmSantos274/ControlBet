@@ -41,8 +41,8 @@ app.use('/api/pagamentos', pagamentosRoutes)
 // Health check
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }))
 
-// Frontend estático (Next.js export) — só existe em produção
-const sitePath = path.join(__dirname, '../../site/out')
+// Frontend estático (Next.js export) — gerado em backend/public/ pelo build
+const sitePath = path.join(__dirname, '../public')
 if (fs.existsSync(sitePath)) {
   app.use(express.static(sitePath, { extensions: ['html'] }))
   app.get('*', (_req, res) => res.sendFile(path.join(sitePath, 'index.html')))
