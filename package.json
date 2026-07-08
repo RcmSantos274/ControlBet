@@ -2,7 +2,7 @@
   "name": "controlbet",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd site && npm install && npm run build && cd ../backend && npm install && npm run build",
+    "build": "cd site && npm install && npm run build && cd .. && node -e \"require('fs').cpSync('./site/out','./backend/public',{recursive:true,force:true})\" && cd backend && npm install && npx prisma generate && tsc",
     "start": "cd backend && node dist/server.js"
   },
   "engines": {
