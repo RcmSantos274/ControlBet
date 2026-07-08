@@ -1,4 +1,5 @@
 import { Router, Response } from 'express'
+import { z } from 'zod'
 import { prisma } from '../lib/prisma'
 import { authMiddleware, AuthRequest } from '../middleware/auth'
 import { validate, asyncHandler, surebetSchema, surebetUpdateSchema } from '../lib/validate'
@@ -36,6 +37,24 @@ router.delete('/:id', asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!sb) { res.status(404).json({ error: 'Surebet não encontrada.' }); return }
 
   await prisma.surebet.delete({ where: { id } })
+  res.json({ ok: true })
+}))
+
+const bulkSchema = z.array(surebetSchema).max(5000)
+
+router.post('/bulk', asyncHandler(async (req: AuthRequest, res: Response) => {
+  const result = bulkSchema.safeParse(req.body)
+  if (!result.success) {
+    const msg = result.error.issues[0]?.message ?? 'Dados inválidos.'
+    res.status(400).json({ error: msg })
+    return
+  }
+  await prisma.surebet.deleteMany({ where: { userId: req.userId! } })
+  if (result.data.length) {
+    await prisma.surebet.createMany({
+      data: result.data.map(sb => ({ ...sb, userId: req.userId! })),
+    })
+  }
   res.json({ ok: true })
 }))
 

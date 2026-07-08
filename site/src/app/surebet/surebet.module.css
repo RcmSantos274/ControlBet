@@ -18,6 +18,14 @@
 
 .counter { font-size: 1rem; color: var(--muted); font-weight: 500; }
 .actions { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.importLabel {
+  display: inline-flex; align-items: center; cursor: pointer;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 7px;
+  padding: .3rem .7rem; font-size: .78rem; font-weight: 600;
+  transition: all .2s; white-space: nowrap;
+}
+.importLabel:hover { color: var(--text); border-color: var(--muted); }
 
 /* ── Section header ── */
 .sectionHeader {

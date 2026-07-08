@@ -116,6 +116,20 @@ export default function BasqueteDashboard() {
     URL.revokeObjectURL(url)
   }
 
+  function importJSON(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]; if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target?.result as string)
+        if (!Array.isArray(d.apostas)) { alert('Arquivo inválido.'); return }
+        if (confirm(`Importar ${d.apostas.length} aposta(s)?\nOs dados atuais serão substituídos.`)) save(d.apostas)
+      } catch { alert('Erro ao ler o arquivo.') }
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }
+
   return (
     <main className={styles.main}>
       <div className={styles.cards}>
@@ -130,6 +144,7 @@ export default function BasqueteDashboard() {
         <div className={styles.actions}>
           <button className="btn ghost sm" onClick={exportCSV}>↓ CSV</button>
           <button className="btn ghost sm" onClick={exportJSON}>↓ JSON</button>
+          <label className={styles.importLabel}>↑ Importar<input type="file" accept=".json" style={{ display: 'none' }} onChange={importJSON}/></label>
           <button className="btn" onClick={() => { setEditing(null); setModalOpen(true) }}>+ Nova Aposta</button>
         </div>
       </div>

@@ -40,5 +40,14 @@ export function useSurebets() {
     setSurebets(prev => prev.filter(s => s.id !== id))
   }
 
-  return { surebets, loading, refresh, add, update, remove }
+  async function save(data: Omit<Surebet, 'id'>[]) {
+    await fetch('/api/surebets/bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    await refresh()
+  }
+
+  return { surebets, loading, refresh, add, update, remove, save }
 }

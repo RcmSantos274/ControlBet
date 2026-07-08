@@ -15,7 +15,7 @@ function fmtBRL(v: number) {
 }
 
 export default function SurebetPage() {
-  const { surebets, add, update, remove } = useSurebets()
+  const { surebets, add, update, remove, save } = useSurebets()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Surebet | null>(null)
 
@@ -33,6 +33,20 @@ export default function SurebetPage() {
   }
 
   function handleEdit(sb: Surebet) { setEditing(sb); setModalOpen(true) }
+
+  function importJSON(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]; if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target?.result as string)
+        if (!Array.isArray(d.surebets)) { alert('Arquivo inválido.'); return }
+        if (confirm(`Importar ${d.surebets.length} surebet(s)?\nOs dados atuais serão substituídos.`)) save(d.surebets)
+      } catch { alert('Erro ao ler o arquivo.') }
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }
 
   function exportCSV() {
     const cols = ['Data Aposta','Data Evento','Esporte','Evento','Casa 1','Mercado 1','Odd 1','Stake 1','Resultado 1','Casa 2','Mercado 2','Odd 2','Stake 2','Resultado 2','Lucro']
@@ -77,6 +91,7 @@ export default function SurebetPage() {
         <h2 className={styles.counter}>{surebets.length} surebet{surebets.length !== 1 ? 's' : ''}</h2>
         <div className={styles.actions}>
           <button className="btn ghost sm" onClick={exportCSV}>↓ CSV</button>
+          <label className={styles.importLabel}>↑ Importar<input type="file" accept=".json" style={{ display: 'none' }} onChange={importJSON}/></label>
           <button className="btn" onClick={() => { setEditing(null); setModalOpen(true) }}>+ Nova Surebet</button>
         </div>
       </div>
