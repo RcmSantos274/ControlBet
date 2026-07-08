@@ -1,5 +1,5 @@
 'use client'
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement,
   PointElement, ArcElement, Title, Tooltip, Legend, Filler,
@@ -110,6 +110,7 @@ function ChartCard({ icon, title, subtitle, children, large = false }: { icon: s
 
 export default function AnaliseClient({ sport = 'futebol' }: { sport?: string }) {
   const { apostas } = useApostas(sport)
+  const [diasFiltro, setDiasFiltro] = useState<7|14|30>(30)
 
   const resolved = apostas.filter(b => b.resultado !== 'pendente')
   const winners = apostas.filter(b => b.resultado === 'ganhou' || b.resultado === 'cash')
@@ -174,6 +175,11 @@ export default function AnaliseClient({ sport = 'futebol' }: { sport?: string })
       values: sorted.map(d => parseFloat(byDay[d].toFixed(2))),
     }
   }, [apostas])
+
+  const lucroDiaFiltered = useMemo(() => ({
+    labels: lucroDiaData.labels.slice(-diasFiltro),
+    values: lucroDiaData.values.slice(-diasFiltro),
+  }), [lucroDiaData, diasFiltro])
 
   const sitStats = useMemo(() => ['pre','ao-vivo'].map(sit => {
     const label = sit==='pre'?'Pré Live':'Ao Vivo'
@@ -266,10 +272,36 @@ export default function AnaliseClient({ sport = 'futebol' }: { sport?: string })
 
       {/* LUCRO POR DIA */}
       <SectionHeader title="Lucro / Prejuízo por Dia"/>
-      <ChartCard icon="▦" title="Resultado Diário (R$)" subtitle="Lucro ou prejuízo acumulado por dia de apostas." large>
-        <div className={styles.chartWrap} style={{ height: Math.max(280, lucroDiaData.labels.length*38+60) }}>
-          <Bar plugins={[ChartDataLabels]} data={{ labels: lucroDiaData.labels, datasets:[{ data:lucroDiaData.values, backgroundColor:lucroDiaData.values.map(v=>v>=0?C.greenDark:C.redDark), borderColor:lucroDiaData.values.map(v=>v>=0?C.green:C.red),borderWidth:2,borderRadius:5}]}}
-            options={{responsive:true,maintainAspectRatio:false,layout:{padding:{top:22}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.parsed.y??0),afterLabel:(_c,i=0)=>lucroDiaData.values[i]>=0?'✅ Dia positivo':'❌ Dia negativo'}},datalabels:dlV},scales:{x:xAxis(),y:yAxis(true)}}}/>
+      <ChartCard icon="▦" title="Resultado Diário (R$)" subtitle="Lucro ou prejuízo por dia de apostas." large>
+        <div style={{ display:'flex', gap:'.4rem', marginBottom:'1rem', justifyContent:'flex-end' }}>
+          {([7,14,30] as const).map(d => (
+            <button key={d} onClick={() => setDiasFiltro(d)} style={{
+              padding:'.22rem .65rem', borderRadius:'6px', fontSize:'.78rem', fontWeight:700, cursor:'pointer',
+              background: diasFiltro===d ? 'rgba(0,240,168,.15)' : 'transparent',
+              color: diasFiltro===d ? '#00f0a8' : '#94a3b8',
+              border: `1px solid ${diasFiltro===d ? '#00f0a8' : 'rgba(148,163,184,.25)'}`,
+              transition:'all .15s',
+            }}>{d}d</button>
+          ))}
+        </div>
+        <div className={styles.chartWrap} style={{ height: 320 }}>
+          <Bar
+            plugins={[ChartDataLabels]}
+            data={{ labels: lucroDiaFiltered.labels, datasets:[{ data:lucroDiaFiltered.values, backgroundColor:lucroDiaFiltered.values.map(v=>v>=0?C.greenDark:C.redDark), borderColor:lucroDiaFiltered.values.map(v=>v>=0?C.green:C.red), borderWidth:2, borderRadius:5 }]}}
+            options={{
+              responsive:true, maintainAspectRatio:false,
+              layout:{ padding:{ top: diasFiltro < 30 ? 22 : 8 } },
+              plugins:{
+                legend:{ display:false },
+                tooltip:{ callbacks:{ label:c=>fmt(c.parsed.y??0) } },
+                datalabels:{ ...dlV, display: diasFiltro < 30, font:{ size: diasFiltro===7 ? 11 : 10, weight:700 } },
+              },
+              scales:{
+                x:{ ticks:{ color:TC, font:{ size: diasFiltro===30 ? 10 : 12, weight:700 }, maxRotation: diasFiltro===30 ? 45 : 0, minRotation: diasFiltro===30 ? 45 : 0 }, grid:{ color:GC } },
+                y: yAxis(true),
+              },
+            }}
+          />
         </div>
       </ChartCard>
 
