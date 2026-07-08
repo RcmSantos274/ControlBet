@@ -181,6 +181,20 @@ export default function AnaliseClient({ sport = 'futebol' }: { sport?: string })
     values: lucroDiaData.values.slice(-diasFiltro),
   }), [lucroDiaData, diasFiltro])
 
+  const lucroMesData = useMemo(() => {
+    const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
+    const byMonth: Record<string, number> = {}
+    apostas.filter(b => b.resultado !== 'pendente' && b.data).forEach(b => {
+      const key = b.data.slice(0, 7)
+      byMonth[key] = (byMonth[key] || 0) + norm(b).lucro
+    })
+    const sorted = Object.keys(byMonth).sort()
+    return {
+      labels: sorted.map(k => { const [y, m] = k.split('-'); return `${MESES[+m-1]}/${y.slice(2)}` }),
+      values: sorted.map(k => parseFloat(byMonth[k].toFixed(2))),
+    }
+  }, [apostas])
+
   const sitStats = useMemo(() => ['pre','ao-vivo'].map(sit => {
     const label = sit==='pre'?'Pré Live':'Ao Vivo'
     const bets = apostas.filter(b=>b.situacao===sit)
@@ -300,6 +314,25 @@ export default function AnaliseClient({ sport = 'futebol' }: { sport?: string })
                 x:{ ticks:{ color:TC, font:{ size: diasFiltro===30 ? 10 : 12, weight:700 }, maxRotation: diasFiltro===30 ? 45 : 0, minRotation: diasFiltro===30 ? 45 : 0 }, grid:{ color:GC } },
                 y: yAxis(true),
               },
+            }}
+          />
+        </div>
+      </ChartCard>
+
+      <ChartCard icon="📅" title="Lucro / Prejuízo por Mês" subtitle="Resultado mensal acumulado de todas as apostas resolvidas." large>
+        <div className={styles.chartWrap} style={{ height: 300 }}>
+          <Bar
+            plugins={[ChartDataLabels]}
+            data={{ labels: lucroMesData.labels, datasets:[{ data:lucroMesData.values, backgroundColor:lucroMesData.values.map(v=>v>=0?C.greenDark:C.redDark), borderColor:lucroMesData.values.map(v=>v>=0?C.green:C.red), borderWidth:2, borderRadius:6, barThickness: Math.min(72, Math.max(32, 320 / Math.max(lucroMesData.labels.length, 1))) }]}}
+            options={{
+              responsive:true, maintainAspectRatio:false,
+              layout:{ padding:{ top:26 } },
+              plugins:{
+                legend:{ display:false },
+                tooltip:{ callbacks:{ label:c=>fmt(c.parsed.y??0) } },
+                datalabels:{ ...dlV, font:{ size:11, weight:700 } },
+              },
+              scales:{ x:xAxis(), y:yAxis(true) },
             }}
           />
         </div>
