@@ -1,10 +1,14 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Nav from './Nav'
 
 const PUBLIC = ['/login', '/cadastro']
+
+function isPublicPath(p: string) {
+  return PUBLIC.some(pub => p === pub || p.startsWith(pub + '/'))
+}
 
 type PlanInfo = {
   name: string
@@ -49,26 +53,42 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [checked, setChecked] = useState(false)
   const [planInfo, setPlanInfo] = useState<PlanInfo | null>(null)
 
+  // Always reflects the current path — safe to read inside async callbacks
+  const pathRef = useRef(path)
+  pathRef.current = path
+
   useEffect(() => {
-    if (PUBLIC.includes(path)) { setChecked(true); return }
-    fetch('/api/auth/me')
+    if (isPublicPath(path)) { setChecked(true); return }
+
+    const controller = new AbortController()
+
+    fetch('/api/auth/me', { signal: controller.signal })
       .then(r => {
-        if (!r.ok) { router.replace('/login'); return null }
+        if (!r.ok) {
+          if (!isPublicPath(pathRef.current)) router.replace('/login')
+          return null
+        }
         return r.json()
       })
       .then((u: PlanInfo | null) => {
         if (!u) return
+        if (isPublicPath(pathRef.current)) return
         setPlanInfo(u)
-        if (u.planExpired && path !== '/assinatura') {
+        if (u.planExpired && pathRef.current !== '/assinatura') {
           router.replace('/assinatura')
           return
         }
         setChecked(true)
       })
-      .catch(() => router.replace('/login'))
+      .catch((err) => {
+        if (err.name === 'AbortError') return
+        if (!isPublicPath(pathRef.current)) router.replace('/login')
+      })
+
+    return () => controller.abort()
   }, [path, router])
 
-  const isPublic = PUBLIC.includes(path)
+  const isPublic = isPublicPath(path)
 
   if (!checked && !isPublic) return null
   if (isPublic) return <>{children}</>
