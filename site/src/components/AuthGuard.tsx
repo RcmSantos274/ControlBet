@@ -86,7 +86,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       })
 
     return () => controller.abort()
-  }, [path, router])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [path])
 
   const isPublic = isPublicPath(path)
 
