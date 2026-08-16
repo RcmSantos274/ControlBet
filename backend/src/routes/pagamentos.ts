@@ -17,7 +17,9 @@ type Plano = keyof typeof PLANOS
 
 async function ativarPlano(mpPaymentId: string, dbPaymentId: string, userId: string, plano: Plano) {
   const dias = PLANOS[plano].dias
-  const planExpiresAt = new Date(Date.now() + dias * 24 * 60 * 60 * 1000)
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { planExpiresAt: true } })
+  const base = user?.planExpiresAt && user.planExpiresAt > new Date() ? user.planExpiresAt : new Date()
+  const planExpiresAt = new Date(base.getTime() + dias * 24 * 60 * 60 * 1000)
   await prisma.$transaction([
     prisma.payment.update({ where: { id: dbPaymentId }, data: { status: 'approved' } }),
     prisma.user.update({ where: { id: userId }, data: { planStatus: 'ativo', planExpiresAt } }),
