@@ -143,9 +143,9 @@ export default function AssinaturaPage() {
           <button
             className={styles.btnPrimary}
             onClick={() => assinar('mensal')}
-            disabled={!!loading || isActive}
+            disabled={!!loading}
           >
-            {loading === 'mensal' ? 'Gerando PIX…' : isActive ? 'Plano ativo' : 'Assinar plano mensal'}
+            {loading === 'mensal' ? 'Gerando PIX…' : isActive ? 'Adicionar 30 dias' : 'Assinar plano mensal'}
           </button>
         </div>
 
@@ -171,9 +171,9 @@ export default function AssinaturaPage() {
           <button
             className={styles.btnSecondary}
             onClick={() => assinar('trimestral')}
-            disabled={!!loading || isActive}
+            disabled={!!loading}
           >
-            {loading === 'trimestral' ? 'Gerando PIX…' : isActive ? 'Plano ativo' : 'Assinar plano trimestral'}
+            {loading === 'trimestral' ? 'Gerando PIX…' : isActive ? 'Adicionar 90 dias' : 'Assinar plano trimestral'}
           </button>
         </div>
 
@@ -199,9 +199,9 @@ export default function AssinaturaPage() {
           <button
             className={styles.btnSecondary}
             onClick={() => assinar('anual')}
-            disabled={!!loading || isActive}
+            disabled={!!loading}
           >
-            {loading === 'anual' ? 'Gerando PIX…' : isActive ? 'Plano ativo' : 'Assinar plano anual'}
+            {loading === 'anual' ? 'Gerando PIX…' : isActive ? 'Adicionar 365 dias' : 'Assinar plano anual'}
           </button>
         </div>
 
