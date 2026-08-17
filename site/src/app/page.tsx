@@ -60,20 +60,17 @@ export default function LandingPage() {
 
       {/* SCREENSHOTS */}
       <section className={styles.screenshots} id="dashboard-preview">
-        <p className={styles.screenshotsLabel}>Veja como funciona na prática</p>
-        <div className={styles.screenshotsGrid}>
-          <div className={styles.screenshotCard}>
-            <div className={styles.screenshotTag}>Registro de apostas</div>
-            <img src="/images/apostas.png" alt="Painel de apostas" className={styles.screenshotImg} />
-          </div>
-          <div className={styles.screenshotCard}>
-            <div className={styles.screenshotTag}>Lucro por mercado</div>
-            <img src="/images/grafico_lucromercado.png" alt="Gráfico de lucro por mercado" className={styles.screenshotImg} />
-          </div>
-          <div className={styles.screenshotCard}>
-            <div className={styles.screenshotTag}>Desempenho por faixa de odd</div>
-            <img src="/images/graficos_faixaodds.png" alt="Gráfico de faixa de odds" className={styles.screenshotImg} />
-          </div>
+        <div className={styles.screenshotBlock}>
+          <h2 className={styles.screenshotTitle}>Registro de Apostas</h2>
+          <img src="/images/apostas.png" alt="Painel de apostas" className={styles.screenshotImg} />
+        </div>
+        <div className={styles.screenshotBlock}>
+          <h2 className={styles.screenshotTitle}>Lucro por Mercado</h2>
+          <img src="/images/grafico_lucromercado.png" alt="Gráfico de lucro por mercado" className={styles.screenshotImg} />
+        </div>
+        <div className={styles.screenshotBlock}>
+          <h2 className={styles.screenshotTitle}>Desempenho por Faixa de Odd</h2>
+          <img src="/images/graficos_faixaodds.png" alt="Gráfico de faixa de odds" className={styles.screenshotImg} />
         </div>
       </section>
 
