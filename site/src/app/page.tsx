@@ -1,18 +1,8 @@
 'use client'
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import styles from './landing.module.css'
 
 export default function LandingPage() {
-  const router = useRouter()
-
-  useEffect(() => {
-    fetch('/api/auth/me').then(r => {
-      if (r.ok) router.replace('/apostas')
-    }).catch(() => {})
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   function scrollToDash() {
     document.getElementById('dashboard-preview')?.scrollIntoView({ behavior: 'smooth' })
