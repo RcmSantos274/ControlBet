@@ -124,7 +124,7 @@ export default function Nav() {
 
   return (
     <aside className={styles.sidebar}>
-      <Link href="/" className={styles.logo}>
+      <Link href="/apostas" className={styles.logo}>
         <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="navG" gradientUnits="userSpaceOnUse" x1="16" y1="84" x2="76" y2="16">

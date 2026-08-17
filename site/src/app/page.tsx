@@ -11,7 +11,8 @@ export default function LandingPage() {
     fetch('/api/auth/me').then(r => {
       if (r.ok) router.replace('/apostas')
     }).catch(() => {})
-  }, [router])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function scrollToDash() {
     document.getElementById('dashboard-preview')?.scrollIntoView({ behavior: 'smooth' })
