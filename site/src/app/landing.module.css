@@ -68,6 +68,10 @@
 .footer { max-width: 1370px; margin: 25px auto; border-top: 1px solid #17283d; padding-top: 17px; text-align: center; color: #7f8da0; font-size: 16px; }
 .footer span { color: #00f0a8; }
 
+/* Hide landing header/footer when inside the authenticated app layout (sidebar visible) */
+:global(.app-layout) .header { display: none; }
+:global(.app-layout) .footer { display: none; }
+
 /* ── Responsive ── */
 @media (max-width: 1100px) {
   .dashboard { margin-left: 20px; margin-right: 20px; }

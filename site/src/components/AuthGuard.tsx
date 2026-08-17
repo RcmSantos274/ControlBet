@@ -4,10 +4,17 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Nav from './Nav'
 
-const PUBLIC = ['/', '/login', '/cadastro']
+// Strict public: never needs auth, never shows sidebar
+const PUBLIC = ['/login', '/cadastro']
+// Semi-public: visible to all, but shows sidebar when authenticated
+const SEMI_PUBLIC = ['/']
 
 function isPublicPath(p: string) {
   return PUBLIC.some(pub => p === pub || p.startsWith(pub + '/'))
+}
+
+function isSemiPublic(p: string) {
+  return SEMI_PUBLIC.some(pub => p === pub || p.startsWith(pub + '/'))
 }
 
 type PlanInfo = {
@@ -65,6 +72,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     fetch('/api/auth/me', { signal: controller.signal })
       .then(r => {
         if (!r.ok) {
+          // Semi-public (landing): show anonymously, no redirect
+          if (isSemiPublic(pathRef.current)) { setChecked(true); return null }
           if (!isPublicPath(pathRef.current)) router.replace('/login')
           return null
         }
@@ -74,7 +83,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         if (!u) return
         if (isPublicPath(pathRef.current)) return
         setPlanInfo(u)
-        if (u.planExpired && pathRef.current !== '/assinatura') {
+        if (u.planExpired && pathRef.current !== '/assinatura' && !isSemiPublic(pathRef.current)) {
           router.replace('/assinatura')
           return
         }
@@ -82,7 +91,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       })
       .catch((err) => {
         if (err.name === 'AbortError') return
-        if (!isPublicPath(pathRef.current)) router.replace('/login')
+        if (!isPublicPath(pathRef.current) && !isSemiPublic(pathRef.current)) router.replace('/login')
+        else setChecked(true)
       })
 
     return () => controller.abort()
@@ -90,9 +100,14 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [path])
 
   const isPublic = isPublicPath(path)
+  const isLanding = isSemiPublic(path)
 
-  if (!checked && !isPublic) return null
+  // Strict public (login/cadastro): always show without sidebar
   if (isPublic) return <>{children}</>
+  // Landing unauthenticated: show without sidebar (planInfo is null)
+  if (isLanding && !planInfo) return <>{children}</>
+  // Private routes: block until checked
+  if (!checked && !isLanding) return null
 
   const showTrialBanner =
     planInfo?.planStatus === 'trial' &&
