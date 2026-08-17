@@ -23,8 +23,8 @@ app.use(helmet())
 app.use(express.json({ limit: '200kb' }))
 app.use(cookieParser())
 
-// Rate limit global: 200 req / 15 min por IP
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200, standardHeaders: true, legacyHeaders: false }))
+// Rate limit para rotas de API: 500 req / 15 min por IP
+app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, max: 500, standardHeaders: true, legacyHeaders: false }))
 
 // Rate limit mais restrito para auth: 20 req / 15 min
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: { error: 'Muitas tentativas. Tente novamente em 15 minutos.' } })
