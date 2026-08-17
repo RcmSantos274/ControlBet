@@ -4,7 +4,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Nav from './Nav'
 
-const PUBLIC = ['/login', '/cadastro']
+const PUBLIC = ['/', '/login', '/cadastro']
 
 function isPublicPath(p: string) {
   return PUBLIC.some(pub => p === pub || p.startsWith(pub + '/'))

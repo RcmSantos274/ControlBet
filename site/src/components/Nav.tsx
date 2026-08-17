@@ -13,7 +13,7 @@ const SECTIONS: Section[] = [
     label: 'Futebol',
     color: '#00c896',
     items: [
-      { label: 'Apostas', href: '/' },
+      { label: 'Apostas', href: '/apostas' },
       { label: 'Gráficos', href: '/analise' },
     ],
   },
@@ -50,7 +50,7 @@ function sectionForPath(path: string): string | null {
 }
 
 function isActive(href: string, path: string) {
-  return href === '/' ? path === '/' : path === href || path.startsWith(href + '/')
+  return path === href || (href !== '/apostas' && path.startsWith(href + '/'))
 }
 
 function IconApostas() {
