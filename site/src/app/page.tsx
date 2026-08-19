@@ -1,8 +1,14 @@
 'use client'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import styles from './landing.module.css'
 
 export default function LandingPage() {
+  const [loggedIn, setLoggedIn] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/auth/me').then(r => { if (r.ok) setLoggedIn(true) }).catch(() => {})
+  }, [])
 
   function scrollToDash() {
     document.getElementById('dashboard-preview')?.scrollIntoView({ behavior: 'smooth' })
@@ -28,7 +34,10 @@ export default function LandingPage() {
         </h1>
         <p className={styles.heroSub}>Registre, analise e evolua com dados reais</p>
         <div className={styles.heroButtons}>
-          <Link href="/cadastro" className={styles.btnPrimary}>Começar grátis &nbsp;→</Link>
+          {loggedIn
+            ? <Link href="/apostas" className={styles.btnPrimary}>Registrar Apostas &nbsp;→</Link>
+            : <Link href="/cadastro" className={styles.btnPrimary}>Começar grátis &nbsp;→</Link>
+          }
           <button className={styles.btnSecondary} onClick={scrollToDash}>◉ &nbsp;Ver demonstração</button>
         </div>
       </section>
