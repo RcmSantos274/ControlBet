@@ -23,7 +23,10 @@ export default function LandingPage() {
           <div className={styles.logoIcon} />
           Control<span className={styles.logoGreen}>Bet</span>
         </div>
-        <Link href="/login" className={styles.loginBtn}>↪ &nbsp;Entrar</Link>
+        {loggedIn
+          ? <Link href="/apostas" className={styles.loginBtn}>▣ &nbsp;Painel</Link>
+          : <Link href="/login" className={styles.loginBtn}>↪ &nbsp;Entrar</Link>
+        }
       </header>
 
       {/* HERO */}

@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import styles from './auth.module.css'
@@ -12,6 +12,12 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Se já está logado, vai direto pro painel
+  useEffect(() => {
+    fetch('/api/auth/me').then(r => { if (r.ok) router.replace('/apostas') }).catch(() => {})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(''); setLoading(true)
@@ -23,8 +29,8 @@ export default function LoginPage() {
     const data = await res.json()
     setLoading(false)
     if (!res.ok) { setError(data.error); return }
-    router.push('/apostas')
-    router.refresh()
+    // router.refresh() omitido — não funciona em output:export estático
+    window.location.href = '/apostas'
   }
 
   return (
