@@ -1,10 +1,9 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useApostas } from '@/hooks/useApostas'
 import { useTimes } from '@/hooks/useTimes'
 import { fmt, today, normBet } from '@/lib/utils'
 import { corrigirDatasCopa2026 } from '@/lib/copaFix'
-import { seedDemoApostas } from '@/lib/demo'
 import type { Aposta, Filters, SortState, SortCol } from '@/types'
 import BetModal from '@/components/dashboard/BetModal'
 import BetsTable from '@/components/dashboard/BetsTable'
@@ -25,6 +24,15 @@ export default function Dashboard() {
   const [sortState, setSortState] = useState<SortState>({ col: null, dir: 'desc' })
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [drawerPartida, setDrawerPartida] = useState<string | null>(null)
+  const [planStatus, setPlanStatus] = useState<string>('')
+
+  useEffect(() => {
+    fetch('/api/auth/me').then(r => r.ok ? r.json() : null).then(u => {
+      if (u) setPlanStatus(u.planStatus)
+    })
+  }, [])
+
+  const isPaid = planStatus === 'ativo'
 
   const resolved = apostas.filter(b => b.resultado !== 'pendente')
   const winners = apostas.filter(b => b.resultado === 'ganhou' || b.resultado === 'cash')
@@ -146,17 +154,14 @@ export default function Dashboard() {
       <div className={styles.toolbar}>
         <h2 className={styles.counter}>{apostas.length} registro{apostas.length !== 1 ? 's' : ''}</h2>
         <div className={styles.actions}>
-          <button className="btn ghost sm" onClick={exportCSV}>↓ CSV</button>
-          <button className="btn ghost sm" onClick={exportJSON}>↓ JSON</button>
-          <label className={styles.importLabel}>
-            ↑ Importar
-            <input type="file" accept=".json" style={{ display: 'none' }} onChange={importJSON}/>
-          </label>
-          {apostas.length === 0 && (
-            <button className="btn ghost sm" onClick={() => save(seedDemoApostas())} style={{ borderColor: 'var(--purple)', color: 'var(--purple)' }}>
-              🎲 Dados Demo
-            </button>
-          )}
+          {isPaid && <>
+            <button className="btn ghost sm" onClick={exportCSV}>↓ CSV</button>
+            <button className="btn ghost sm" onClick={exportJSON}>↓ JSON</button>
+            <label className={styles.importLabel}>
+              ↑ Importar
+              <input type="file" accept=".json" style={{ display: 'none' }} onChange={importJSON}/>
+            </label>
+          </>}
           <button className="btn" onClick={() => { setEditing(null); setModalOpen(true) }}>+ Nova Aposta</button>
         </div>
       </div>
