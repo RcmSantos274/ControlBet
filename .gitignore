@@ -10,4 +10,3 @@ yarn-error.log*
 backend/src/generated/
 site/src/generated/
 site/out/
-backend/public/
