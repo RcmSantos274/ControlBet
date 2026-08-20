@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   images: { unoptimized: true },
   ...(isProd
-    ? { output: 'export' }
+    ? { output: 'export', trailingSlash: true }
     : {
         async rewrites() {
           const apiUrl = process.env.API_URL ?? 'http://localhost:3001'
