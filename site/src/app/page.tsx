@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import styles from './landing.module.css'
+import { pixelEvent } from '@/lib/pixel'
 
 export default function LandingPage() {
   const [loggedIn, setLoggedIn] = useState(false)
@@ -39,7 +40,7 @@ export default function LandingPage() {
         <div className={styles.heroButtons}>
           {loggedIn
             ? <Link href="/apostas" className={styles.btnPrimary}>Registrar Apostas &nbsp;→</Link>
-            : <Link href="/cadastro" className={styles.btnPrimary}>Começar grátis &nbsp;→</Link>
+            : <Link href="/cadastro" className={styles.btnPrimary} onClick={() => pixelEvent('Lead')}>Começar grátis &nbsp;→</Link>
           }
           <button className={styles.btnSecondary} onClick={scrollToDash}>◉ &nbsp;Ver demonstração</button>
         </div>

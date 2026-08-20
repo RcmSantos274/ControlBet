@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import styles from '../login/auth.module.css'
+import { pixelEvent } from '@/lib/pixel'
 
 export default function CadastroPage() {
   const router = useRouter()
@@ -28,8 +29,8 @@ export default function CadastroPage() {
     const data = await res.json()
     setLoading(false)
     if (!res.ok) { setError(data.error); return }
-    router.push('/')
-    router.refresh()
+    pixelEvent('CompleteRegistration')
+    window.location.href = '/apostas'
   }
 
   return (

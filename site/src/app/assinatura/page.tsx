@@ -3,6 +3,9 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './assinatura.module.css'
 import PixModal from '@/components/assinatura/PixModal'
+import { pixelEvent } from '@/lib/pixel'
+
+const PLAN_VALUE: Record<string, number> = { mensal: 19.90, trimestral: 49.90, anual: 149.90 }
 
 type PlanInfo = {
   planStatus: string
@@ -62,6 +65,7 @@ export default function AssinaturaPage() {
   async function assinar(plano: 'mensal' | 'trimestral' | 'anual') {
     setError('')
     setLoading(plano)
+    pixelEvent('InitiateCheckout', { value: PLAN_VALUE[plano], currency: 'BRL', content_name: plano })
     try {
       const res = await fetch('/api/pagamentos/criar', {
         method: 'POST',
@@ -82,7 +86,7 @@ export default function AssinaturaPage() {
   function handleApproved() {
     setModalOpen(false)
     fetchPlan()
-    router.refresh()
+    if (pixData) pixelEvent('Purchase', { value: PLAN_VALUE[pixData.plano] ?? 0, currency: 'BRL', content_name: pixData.plano })
   }
 
   return (
