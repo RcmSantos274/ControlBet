@@ -164,7 +164,7 @@ export default function Nav() {
     <aside className={styles.sidebar}>
 
       {/* LOGO */}
-      <Link href="/" className={styles.logo}>
+      <Link href="/" className={styles.logo} onClick={() => sessionStorage.setItem('viewLanding', '1')}>
         <div className={styles.logoIcon}>
           <svg width="22" height="22" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M 50,84 A 34,34 0 1,1 74,26" stroke="#00f0a8" strokeWidth="11" strokeLinecap="round"/>

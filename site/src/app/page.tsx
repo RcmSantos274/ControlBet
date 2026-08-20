@@ -8,7 +8,17 @@ export default function LandingPage() {
   const [loggedIn, setLoggedIn] = useState(false)
 
   useEffect(() => {
-    fetch('/api/auth/me').then(r => { if (r.ok) setLoggedIn(true) }).catch(() => {})
+    fetch('/api/auth/me').then(r => {
+      if (!r.ok) return
+      // Veio do logo do app (clique intencional) → mostra landing logado
+      if (sessionStorage.getItem('viewLanding') === '1') {
+        sessionStorage.removeItem('viewLanding')
+        setLoggedIn(true)
+        return
+      }
+      // Acesso direto ao site logado → vai pro painel
+      window.location.href = '/apostas'
+    }).catch(() => {})
   }, [])
 
   function scrollToDash() {
